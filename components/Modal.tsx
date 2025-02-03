@@ -116,7 +116,7 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const constraintsRef = useRef(null)
   const [y, setY] = useState(0)
-  const springProps = useSpring({ y: y as number })
+  const springY = useSpring(y)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -194,7 +194,7 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
         <motion.div
           {...swipeHandlers}
           style={{
-            y: springProps.y,
+            y: springY,
             touchAction: "none",
           }}
           className="fixed inset-0 z-50 flex flex-col bg-black bg-opacity-90 overflow-hidden"
@@ -207,7 +207,7 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
                 className="max-w-full max-h-[calc(100vh-200px)] w-auto h-auto object-contain"
                 animate={{
                   opacity: 1,
-                  scale: typeof springProps.y === "number" ? 1 - Math.abs(springProps.y) * 0.003 : 1,
+                  scale: 1 - Math.abs(springY.get()) * 0.003,
                 }}
                 initial={{ opacity: 0 }}
                 exit={{ opacity: 0 }}

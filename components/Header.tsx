@@ -256,7 +256,7 @@ export default function Header() {
                 <Linkedin size={28} />
               </a>
               <a
-                href="https://github.com/johndoe"
+                href="https://github.com/Landy63"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400 transition-colors duration-300"

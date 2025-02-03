@@ -25,13 +25,12 @@ export default function AboutMe({ className = "" }) {
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 bg-opacity-90 dark:bg-opacity-90 rounded-lg !rounded-lg shadow-xl p-8 max-w-4xl mx-auto transform hover:scale-105 transition-all duration-300 ease-in-out border border-gray-300 dark:border-gray-700">
           <p className="text-gray-800 dark:text-gray-100 mb-4 leading-relaxed">
-            Bonjour, je suis John Doe, un développeur full-stack passionné avec plus de 5 ans d'expérience dans la
-            création d'applications web. Je me spécialise en React, Node.js et Next.js, et j'adore construire des
-            solutions évolutives et conviviales.
+          Bonjour, je m'appelle Dylan. Je suis diplômé d’un BTS en développement logiciel et applications, mais j’ai surtout affiné 
+          mes compétences en développant des projets concrets, que vous trouverez dans la section “Mes Projets”.
           </p>
           <p className="text-gray-800 dark:text-gray-100 leading-relaxed">
-            Quand je ne code pas, vous pouvez me trouver en train d'explorer de nouvelles technologies, de contribuer à
-            des projets open-source, ou de profiter d'activités de plein air comme la randonnée et la photographie.
+          Je peux passer des heures à coder et optimiser un programme sans m’ennuyer une seconde. J’aime aussi échanger avec d’autres développeurs et apprendre sur différents forums. 
+          Toujours avide de découvrir de nouvelles technologies liées au développement logiciel, j'aime consacrer mon temps à créer des solutions pratiques et intuitives.
           </p>
         </div>
       </div>

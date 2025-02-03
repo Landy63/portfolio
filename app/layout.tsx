@@ -7,7 +7,7 @@ import ThemeChangeGif from "@/components/ThemeChangeGif"
 import Script from "next/script"
 import type { Metadata } from "next"
 import Footer from "@/components/Footer"
-import type React from "react" // Import React
+import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,8 +32,7 @@ export default function RootLayout({
       className="dark"
       style={{
         backgroundColor: "var(--background)",
-        minHeight: "100vh",
-        minHeight: "-webkit-fill-available",
+        minHeight: "calc(100vh - env(safe-area-inset-bottom))", // Combined minHeight style
       }}
     >
       <head>

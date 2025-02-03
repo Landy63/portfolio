@@ -290,8 +290,8 @@ function ProjectForm({
             if (result && typeof result === "string") {
               if (setter === setPresentationImages) {
                 setPresentationImages((prev) => [...prev, result])
-              } else {
-                setter(result)
+              } else if (typeof setter === "function") {
+                ;(setter as React.Dispatch<React.SetStateAction<string | null>>)(result)
               }
             }
           }

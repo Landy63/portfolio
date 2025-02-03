@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+
+/* Assurez-vous que les coins arrondis ne sont pas écrasés */
+.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+/* Réinitialiser les coins arrondis pour les éléments qui ne devraient pas en avoir */
+.rounded-none {
+  border-radius: 0 !important;
+}
+

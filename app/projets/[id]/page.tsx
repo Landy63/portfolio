@@ -21,7 +21,6 @@ export default function ProjectPage() {
         <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
         <div className="flex flex-col md:flex-row gap-8 mb-4">
           <div className="md:w-1/2">
-            {/* Changed from project.image to project.thumbnail to match the Project interface */}
             <img
               src={project.thumbnail || "/placeholder.svg"}
               alt={project.title}

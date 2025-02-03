@@ -40,7 +40,7 @@ export default function WelcomeSection({ className = "" }) {
                 <Image
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Photoroom_20241217_135849-ueteW8zWerLstjdDo5oOU7buH1GTOE.png"
                   alt="Memoji"
-                  fill
+                  layout="fill"
                   objectFit="contain"
                   priority
                 />

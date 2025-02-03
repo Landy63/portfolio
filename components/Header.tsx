@@ -1,15 +1,14 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { Briefcase, User, Mail, Linkedin, Github, Sun, Moon, Home, Menu, X, ArrowLeft } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter, usePathname } from "next/navigation"
 import { useIsMobile } from "@/hooks/useIsMobile"
 import { motion } from "framer-motion"
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 
 export default function Header() {
-  const [activeSection, setActiveSection] = useState("")
-  const [targetSection, setTargetSection] = useState("")
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isBurgerOpen, setIsBurgerOpen] = useState(false)
@@ -17,6 +16,13 @@ export default function Header() {
   const pathname = usePathname()
   const isProjectPage = pathname.startsWith("/projets/")
   const isMobile = useIsMobile()
+
+  const visibleSections = useIntersectionObserver(["accueil", "projets", "a-propos", "contact"])
+
+  const mostVisibleSection = useMemo(() => {
+    if (visibleSections.length === 0) return null
+    return visibleSections.reduce((prev, current) => (current.ratio > prev.ratio ? current : prev)).id
+  }, [visibleSections])
 
   useEffect(() => setMounted(true), [])
 
@@ -33,8 +39,6 @@ export default function Header() {
         const section = document.getElementById(sectionId)
         if (!section) return
 
-        setTargetSection(sectionId) // Ajoutez cette ligne
-
         const navbarHeight = document.querySelector("header")?.offsetHeight || 0
         const extraOffset = 10
         const sectionTop = section.offsetTop - (isMobile ? 0 : navbarHeight) - extraOffset
@@ -43,8 +47,6 @@ export default function Header() {
           top: sectionTop,
           behavior: "smooth",
         })
-
-        // Ne mettez pas à jour activeSection ici
       } else {
         localStorage.setItem("scrollTo", sectionId)
         router.push("/")
@@ -53,27 +55,6 @@ export default function Header() {
     },
     [pathname, router, isMobile],
   )
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (pathname === "/") {
-        const scrollPosition = window.scrollY + (isMobile ? 56 : 100)
-        const sections = ["accueil", "projets", "a-propos", "contact"]
-
-        for (const section of sections) {
-          const element = document.getElementById(section)
-          if (element && scrollPosition >= element.offsetTop) {
-            setActiveSection(section)
-            setTargetSection(section) // Ajoutez cette ligne
-          }
-        }
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [pathname, isMobile])
 
   useEffect(() => {
     if (pathname === "/") {
@@ -111,13 +92,12 @@ export default function Header() {
                   ? "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                   : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
               } transition-colors duration-300 ${
-                activeSection === href || targetSection === href ? "text-blue-900 dark:text-blue-400" : ""
+                mostVisibleSection === href ? "text-blue-900 dark:text-blue-400" : ""
               }`}
               animate={{
-                fontWeight:
-                  activeSection === href || targetSection === href || (isProjectPage && href === "projets") ? 700 : 400,
+                fontWeight: mostVisibleSection === href || (isProjectPage && href === "projets") ? 700 : 400,
                 color:
-                  activeSection === href || targetSection === href || (isProjectPage && href === "projets")
+                  mostVisibleSection === href || (isProjectPage && href === "projets")
                     ? theme === "dark"
                       ? "#60A5FA"
                       : "#2563EB"
@@ -184,14 +164,12 @@ export default function Header() {
             <motion.button
               onClick={() => scrollToSection("accueil")}
               className={`text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400 transition-colors duration-300 flex items-center ${
-                activeSection === "accueil" || targetSection === "accueil"
-                  ? "font-bold text-blue-600 dark:text-blue-400"
-                  : ""
+                mostVisibleSection === "accueil" ? "font-bold text-blue-600 dark:text-blue-400" : ""
               }`}
               animate={{
-                fontWeight: activeSection === "accueil" || targetSection === "accueil" ? 700 : 400,
+                fontWeight: mostVisibleSection === "accueil" ? 700 : 400,
                 color:
-                  activeSection === "accueil" || targetSection === "accueil"
+                  mostVisibleSection === "accueil"
                     ? theme === "dark"
                       ? "#60A5FA"
                       : "#2563EB"
@@ -222,14 +200,14 @@ export default function Header() {
                 <motion.button
                   onClick={() => scrollToSection("projets")}
                   className={`mx-6 text-lg transition-colors duration-300 ${
-                    isProjectPage || activeSection === "projets" || targetSection === "projets"
+                    isProjectPage || mostVisibleSection === "projets"
                       ? "font-bold text-blue-600 dark:text-blue-400"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
                   }`}
                   animate={{
-                    fontWeight: isProjectPage || activeSection === "projets" || targetSection === "projets" ? 700 : 400,
+                    fontWeight: isProjectPage || mostVisibleSection === "projets" ? 700 : 400,
                     color:
-                      isProjectPage || activeSection === "projets" || targetSection === "projets"
+                      isProjectPage || mostVisibleSection === "projets"
                         ? theme === "dark"
                           ? "#60A5FA"
                           : "#2563EB"
@@ -247,14 +225,14 @@ export default function Header() {
                   key={href}
                   onClick={() => scrollToSection(href)}
                   className={`mx-6 text-lg transition-colors duration-300 ${
-                    activeSection === href || targetSection === href
+                    mostVisibleSection === href
                       ? "font-bold text-blue-600 dark:text-blue-400"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
                   }`}
                   animate={{
-                    fontWeight: activeSection === href || targetSection === href ? 700 : 400,
+                    fontWeight: mostVisibleSection === href ? 700 : 400,
                     color:
-                      activeSection === href || targetSection === href
+                      mostVisibleSection === href
                         ? theme === "dark"
                           ? "#60A5FA"
                           : "#2563EB"

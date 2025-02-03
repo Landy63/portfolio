@@ -7,5 +7,6 @@ export interface Project {
   demoUrl: string
   githubUrl: string
   languages: string[]
+  codeSnippet?: string
 }
 

@@ -9,7 +9,7 @@ import { motion } from "framer-motion"
 
 export default function Header() {
   const [activeSection, setActiveSection] = useState("")
-  const [lastClickedSection, setLastClickedSection] = useState<string | null>(null)
+  const [targetSection, setTargetSection] = useState("")
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isBurgerOpen, setIsBurgerOpen] = useState(false)
@@ -29,11 +29,11 @@ export default function Header() {
 
   const scrollToSection = useCallback(
     (sectionId: string) => {
-      setActiveSection(sectionId)
-      setLastClickedSection(sectionId)
       if (pathname === "/") {
         const section = document.getElementById(sectionId)
         if (!section) return
+
+        setTargetSection(sectionId) // Ajoutez cette ligne
 
         const navbarHeight = document.querySelector("header")?.offsetHeight || 0
         const extraOffset = 10
@@ -43,6 +43,8 @@ export default function Header() {
           top: sectionTop,
           behavior: "smooth",
         })
+
+        // Ne mettez pas à jour activeSection ici
       } else {
         localStorage.setItem("scrollTo", sectionId)
         router.push("/")
@@ -54,7 +56,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (pathname === "/" && !lastClickedSection) {
+      if (pathname === "/") {
         const scrollPosition = window.scrollY + (isMobile ? 56 : 100)
         const sections = ["accueil", "projets", "a-propos", "contact"]
 
@@ -62,6 +64,7 @@ export default function Header() {
           const element = document.getElementById(section)
           if (element && scrollPosition >= element.offsetTop) {
             setActiveSection(section)
+            setTargetSection(section) // Ajoutez cette ligne
           }
         }
       }
@@ -70,27 +73,19 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll)
     handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [pathname, isMobile, lastClickedSection])
+  }, [pathname, isMobile])
 
   useEffect(() => {
-    const targetSection = localStorage.getItem("scrollTo")
-    if (pathname === "/" && targetSection) {
-      setTimeout(() => {
-        scrollToSection(targetSection)
-        localStorage.removeItem("scrollTo")
-      }, 100)
+    if (pathname === "/") {
+      const targetSection = localStorage.getItem("scrollTo")
+      if (targetSection) {
+        setTimeout(() => {
+          scrollToSection(targetSection)
+          localStorage.removeItem("scrollTo")
+        }, 100)
+      }
     }
   }, [pathname, scrollToSection])
-
-  useEffect(() => {
-    if (lastClickedSection) {
-      const timer = setTimeout(() => {
-        setLastClickedSection(null)
-      }, 2000) // Réinitialise après 2 secondes
-
-      return () => clearTimeout(timer)
-    }
-  }, [lastClickedSection])
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
@@ -112,14 +107,17 @@ export default function Header() {
               key={href}
               onClick={() => scrollToSection(href)}
               className={`p-2 ${
-                activeSection === href
-                  ? "font-bold text-blue-600 dark:text-blue-400"
+                isProjectPage && href === "projets"
+                  ? "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                   : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
-              } transition-colors duration-300`}
+              } transition-colors duration-300 ${
+                activeSection === href || targetSection === href ? "text-blue-900 dark:text-blue-400" : ""
+              }`}
               animate={{
-                fontWeight: activeSection === href ? 700 : 400,
+                fontWeight:
+                  activeSection === href || targetSection === href || (isProjectPage && href === "projets") ? 700 : 400,
                 color:
-                  activeSection === href
+                  activeSection === href || targetSection === href || (isProjectPage && href === "projets")
                     ? theme === "dark"
                       ? "#60A5FA"
                       : "#2563EB"
@@ -181,17 +179,19 @@ export default function Header() {
 
       {/* Desktop navbar */}
       <nav className="hidden md:block mx-auto max-w-5xl px-4">
-        <div className="bg-gray-100 dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-70 backdrop-blur-md transition-all duration-300 ease-in-out rounded-full px-6 py-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] border border-gray-300 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 transition-all duration-300 ease-in-out rounded-full px-6 py-4 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] border border-gray-300 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <motion.button
               onClick={() => scrollToSection("accueil")}
               className={`text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400 transition-colors duration-300 flex items-center ${
-                activeSection === "accueil" ? "font-bold text-blue-600 dark:text-blue-400" : ""
+                activeSection === "accueil" || targetSection === "accueil"
+                  ? "font-bold text-blue-600 dark:text-blue-400"
+                  : ""
               }`}
               animate={{
-                fontWeight: activeSection === "accueil" ? 700 : 400,
+                fontWeight: activeSection === "accueil" || targetSection === "accueil" ? 700 : 400,
                 color:
-                  activeSection === "accueil"
+                  activeSection === "accueil" || targetSection === "accueil"
                     ? theme === "dark"
                       ? "#60A5FA"
                       : "#2563EB"
@@ -210,15 +210,8 @@ export default function Header() {
                   onClick={() => scrollToSection("projets")}
                   className="mx-6 text-lg text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-300 flex items-center font-semibold"
                   animate={{
-                    fontWeight: activeSection === "projets" ? 700 : 400,
-                    color:
-                      activeSection === "projets"
-                        ? theme === "dark"
-                          ? "#60A5FA"
-                          : "#2563EB"
-                        : theme === "dark"
-                          ? "#F3F4F6"
-                          : "#111827",
+                    fontWeight: 700,
+                    color: theme === "dark" ? "#60A5FA" : "#2563EB",
                   }}
                   transition={{ duration: 0.3 }}
                 >
@@ -229,14 +222,14 @@ export default function Header() {
                 <motion.button
                   onClick={() => scrollToSection("projets")}
                   className={`mx-6 text-lg transition-colors duration-300 ${
-                    activeSection === "projets"
+                    isProjectPage || activeSection === "projets" || targetSection === "projets"
                       ? "font-bold text-blue-600 dark:text-blue-400"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
                   }`}
                   animate={{
-                    fontWeight: activeSection === "projets" ? 700 : 400,
+                    fontWeight: isProjectPage || activeSection === "projets" || targetSection === "projets" ? 700 : 400,
                     color:
-                      activeSection === "projets"
+                      isProjectPage || activeSection === "projets" || targetSection === "projets"
                         ? theme === "dark"
                           ? "#60A5FA"
                           : "#2563EB"
@@ -254,15 +247,14 @@ export default function Header() {
                   key={href}
                   onClick={() => scrollToSection(href)}
                   className={`mx-6 text-lg transition-colors duration-300 ${
-                    (lastClickedSection === href) || (!lastClickedSection && activeSection === href)
+                    activeSection === href || targetSection === href
                       ? "font-bold text-blue-600 dark:text-blue-400"
                       : "text-gray-900 dark:text-gray-100 hover:text-blue-900 dark:hover:text-blue-400"
                   }`}
                   animate={{
-                    fontWeight:
-                      lastClickedSection === href || (!lastClickedSection && activeSection === href) ? 700 : 400,
+                    fontWeight: activeSection === href || targetSection === href ? 700 : 400,
                     color:
-                      lastClickedSection === href || (!lastClickedSection && activeSection === href)
+                      activeSection === href || targetSection === href
                         ? theme === "dark"
                           ? "#60A5FA"
                           : "#2563EB"

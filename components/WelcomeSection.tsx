@@ -10,28 +10,25 @@ import { useIsMobile } from "@/hooks/useIsMobile"
 
 export default function WelcomeSection({ className = "" }) {
   const { projects, cv, isCVLoading, downloadCV } = useProjects()
-  const [playAnimation, setPlayAnimation] = useState(false)
+  const [playAnimation, setPlayAnimation] = useState(true)
+  const isMobile = useIsMobile()
 
   const handleDownloadCV = async () => {
     await downloadCV()
   }
 
   useEffect(() => {
-    const hasAnimationPlayed = localStorage.getItem("welcomeAnimationPlayed")
-    if (!hasAnimationPlayed) {
-      setPlayAnimation(true)
-      localStorage.setItem("welcomeAnimationPlayed", "true")
-    }
+    setPlayAnimation(true)
   }, [])
 
   const portfolioTechnologies = ["Next.js", "TypeScript", "Tailwind CSS"]
   const projectTechnologies = projects.flatMap((project) => project.languages || [])
 
   return (
-    <section id="accueil" className={`pt-2 md:pt-8 ${className} ${!useIsMobile() ? "mb-24" : ""}`}>
+    <section id="accueil" className={`pt-2 md:pt-8 ${className} ${!isMobile ? "mb-24" : ""}`}>
       <div className="container mx-auto px-4 pt-2">
         <div className="flex justify-center items-center mt-4 md:mt-8 mb-8">
-          <TypewriterEffect text="Bienvenue sur mon portfolio" speed={100} playAnimation={playAnimation} />
+          <TypewriterEffect key={Date.now()} text="Bienvenue sur mon portfolio" speed={100} />
         </div>
         <div className="bg-gray-100 dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-70 backdrop-blur-md rounded-lg shadow-lg p-6 mt-8 max-w-4xl mx-auto border border-gray-300 dark:border-gray-700">
           <div className="flex flex-col md:flex-row items-center gap-8">

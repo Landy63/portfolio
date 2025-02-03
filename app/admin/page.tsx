@@ -286,11 +286,12 @@ function ProjectForm({
         if (file.type.startsWith("image/")) {
           const reader = new FileReader()
           reader.onload = (event) => {
-            if (event.target && typeof event.target.result === "string") {
+            const result = event.target?.result
+            if (result && typeof result === "string") {
               if (setter === setPresentationImages) {
-                setPresentationImages((prev) => [...prev, event.target.result])
+                setPresentationImages((prev) => [...prev, result])
               } else {
-                setter(event.target.result)
+                setter(result)
               }
             }
           }

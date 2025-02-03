@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { motion, useMotionValue } from "framer-motion"
+import { motion, useMotionValue, type MotionValue } from "framer-motion"
 import { useState, useEffect, useCallback, useRef } from "react"
 import {
   Code,
@@ -22,6 +22,7 @@ import {
   Rss,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import type React from "react" // Added import for React
 
 const icons = [
   Code,
@@ -49,8 +50,22 @@ interface FloatingObjectProps {
   shape?: string
   size: number
   color: string
-  x: any // Using 'any' for motion values, but ideally should be more specific
-  y: any // Using 'any' for motion values, but ideally should be more specific
+  x: MotionValue<number>
+  y: MotionValue<number>
+}
+
+interface ObjectType {
+  id: number
+  isIcon: boolean
+  Icon: LucideIcon
+  shape: string
+  size: number
+  color: string
+  opacity: number
+  x: MotionValue<number>
+  y: MotionValue<number>
+  vx: number
+  vy: number
 }
 
 const FloatingObject: React.FC<FloatingObjectProps> = ({ Icon, shape, size, color, x, y }) => {
@@ -83,7 +98,7 @@ const FloatingObject: React.FC<FloatingObjectProps> = ({ Icon, shape, size, colo
 
 export default function FloatingObjects() {
   const { theme } = useTheme()
-  const [objects, setObjects] = useState([])
+  const [objects, setObjects] = useState<ObjectType[]>([])
   const cursorRef = useRef({ x: 0, y: 0 })
   const containerRef = useRef(null)
   const touchStartRef = useRef({ x: 0, y: 0 })
@@ -112,7 +127,7 @@ export default function FloatingObjects() {
 
   useEffect(() => {
     const objectsCount = Math.floor(isMobile ? 70 : 175)
-    const newObjects = [...Array(objectsCount)].map((_, index) => ({
+    const newObjects: ObjectType[] = [...Array(objectsCount)].map((_, index) => ({
       id: index,
       isIcon: Math.random() > 0.3,
       Icon: icons[Math.floor(Math.random() * icons.length)],
@@ -245,7 +260,7 @@ export default function FloatingObjects() {
           <FloatingObject
             key={obj.id}
             Icon={obj.Icon}
-            shape={obj.isIcon ? null : obj.shape}
+            shape={obj.isIcon ? undefined : obj.shape}
             size={obj.size}
             color={`${obj.color} opacity-${Math.floor(obj.opacity * 100)}`}
             x={obj.x}

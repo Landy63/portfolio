@@ -169,7 +169,6 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
       setY(eventData.deltaY)
     },
     trackMouse: true,
-    preventDefaultTouchmoveEvent: true,
     trackTouch: true,
     delta: 10,
     swipeDuration: 500,

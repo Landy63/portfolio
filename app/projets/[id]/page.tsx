@@ -21,13 +21,12 @@ export default function ProjectPage() {
         <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
         <div className="flex flex-col md:flex-row gap-8 mb-4">
           <div className="md:w-1/2">
-            {project.thumbnail && (
-              <img
-                src={project.thumbnail || "/placeholder.svg"}
-                alt={project.title}
-                className="w-full rounded-lg shadow-md"
-              />
-            )}
+            {/* Changed from project.image to project.thumbnail to match the Project interface */}
+            <img
+              src={project.thumbnail || "/placeholder.svg"}
+              alt={project.title}
+              className="w-full rounded-lg shadow-md"
+            />
           </div>
           <div className="md:w-1/2">
             <p className="text-lg mb-4 whitespace-pre-wrap break-words overflow-hidden">{project.description}</p>

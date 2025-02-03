@@ -190,7 +190,7 @@ export default function FloatingObjects() {
   }, [objects])
 
   useEffect(() => {
-    let animationFrameId
+    let animationFrameId: number | null = null
 
     const animate = () => {
       updateObjectPositions()
@@ -200,7 +200,7 @@ export default function FloatingObjects() {
     animate()
 
     return () => {
-      if (animationFrameId) {
+      if (animationFrameId !== null) {
         cancelAnimationFrame(animationFrameId)
       }
     }

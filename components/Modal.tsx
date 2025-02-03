@@ -1,9 +1,8 @@
-'use client'
+"use client"
 
-import { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { motion, AnimatePresence, useSpring } from 'framer-motion'
-import { useSwipeable } from 'react-swipeable'
+import { useEffect, useRef, useState } from "react"
+import { motion, AnimatePresence, useSpring } from "framer-motion"
+import { useSwipeable } from "react-swipeable"
 
 const paginationStyles = `
   .paginate {
@@ -117,16 +116,16 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const constraintsRef = useRef(null)
   const [y, setY] = useState(0)
-  const springProps = useSpring({ y })
+  const springProps = useSpring({ y: y as number })
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') prevImage()
-      if (e.key === 'ArrowRight') nextImage()
-      if (e.key === 'Escape') onClose()
+      if (e.key === "ArrowLeft") prevImage()
+      if (e.key === "ArrowRight") nextImage()
+      if (e.key === "Escape") onClose()
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
   }, [onClose])
 
   const nextImage = () => {
@@ -139,13 +138,13 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden"
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = "unset"
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = "unset"
     }
   }, [isOpen])
 
@@ -178,7 +177,7 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
 
   useEffect(() => {
     // Inject the CSS styles
-    const styleElement = document.createElement('style')
+    const styleElement = document.createElement("style")
     styleElement.textContent = paginationStyles
     document.head.appendChild(styleElement)
 
@@ -196,7 +195,7 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
           {...swipeHandlers}
           style={{
             y: springProps.y,
-            touchAction: 'none',
+            touchAction: "none",
           }}
           className="fixed inset-0 z-50 flex flex-col bg-black bg-opacity-90 overflow-hidden"
         >
@@ -206,11 +205,9 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
                 src={images[currentIndex]}
                 alt={`Image ${currentIndex + 1}`}
                 className="max-w-full max-h-[calc(100vh-200px)] w-auto h-auto object-contain"
-                animate={{ 
-                  opacity: 1, 
-                  scale: typeof springProps.y === 'number' 
-                    ? 1 - (Math.abs(springProps.y) * 0.003)
-                    : 1
+                animate={{
+                  opacity: 1,
+                  scale: typeof springProps.y === "number" ? 1 - Math.abs(springProps.y) * 0.003 : 1,
                 }}
                 initial={{ opacity: 0 }}
                 exit={{ opacity: 0 }}
@@ -222,30 +219,24 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
             <div className="w-full max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
               <div className="flex-1"></div>
               <div className="flex items-center justify-center">
-                <button 
-                  className="paginate left" 
-                  onClick={prevImage}
-                  data-state={currentIndex === 0 ? 'disabled' : ''}
-                >
-                  <i></i><i></i>
+                <button className="paginate left" onClick={prevImage} data-state={currentIndex === 0 ? "disabled" : ""}>
+                  <i></i>
+                  <i></i>
                 </button>
                 <span className="mx-4 text-white text-sm">
                   {currentIndex + 1} / {images.length}
                 </span>
-                <button 
-                  className="paginate right" 
+                <button
+                  className="paginate right"
                   onClick={nextImage}
-                  data-state={currentIndex === images.length - 1 ? 'disabled' : ''}
+                  data-state={currentIndex === images.length - 1 ? "disabled" : ""}
                 >
-                  <i></i><i></i>
+                  <i></i>
+                  <i></i>
                 </button>
               </div>
               <div className="flex-1 flex justify-end items-center">
-                <button 
-                  className="close-button"
-                  onClick={onClose}
-                  aria-label="Fermer"
-                />
+                <button className="close-button" onClick={onClose} aria-label="Fermer" />
               </div>
             </div>
             <div className="w-full max-w-7xl mx-auto px-4 py-2 overflow-x-auto">
@@ -254,18 +245,20 @@ export default function Modal({ isOpen, onClose, images, initialIndex }: ModalPr
                   <motion.div
                     key={index}
                     className={`relative cursor-pointer rounded-lg overflow-hidden transition-transform duration-200 hover:brightness-110 flex items-center justify-center w-24 h-full ${
-                      index === currentIndex ? 'ring-4 ring-blue-500' : ''
+                      index === currentIndex ? "ring-4 ring-blue-500" : ""
                     }`}
                     onClick={() => setCurrentIndex(index)}
                   >
                     <img
-                      src={image}
+                      src={image || "/placeholder.svg"}
                       alt={`Thumbnail ${index + 1}`}
                       className="h-full w-full object-cover object-center"
                     />
-                    <div className={`absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-200 ${
-                      index === currentIndex ? 'opacity-0' : 'opacity-100'
-                    }`} />
+                    <div
+                      className={`absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-200 ${
+                        index === currentIndex ? "opacity-0" : "opacity-100"
+                      }`}
+                    />
                   </motion.div>
                 ))}
               </div>
